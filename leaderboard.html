@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NSSB Gemba Walk Leaderboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter','Helvetica',sans-serif;
+}
+
+body{
+    background:linear-gradient(
+        180deg,
+        #0f172a 0%,
+        #1e293b 30%,
+        #f8fafc 100%
+    );
+    color:#1e293b;
+    min-height:100vh;
+}
+
+.container{
+    max-width:500px;
+    margin:0 auto;
+    padding:20px;
+}
+
+.header-card{
+    background:linear-gradient(
+        135deg,
+        #111827,
+        #1e293b,
+        #334155
+    );
+    color:white;
+    border-radius:30px;
+    padding:30px;
+    margin-bottom:25px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+.header-card::before{
+    content:'🏭';
+    position:absolute;
+    right:-10px;
+    top:-10px;
+    font-size:120px;
+    opacity:.08;
+}
+
+.header-card h1{
+    font-size:28px;
+    font-weight:800;
+}
+
+.header-card p{
+    font-size:15px;
+    opacity:.85;
+}
+
+.user-row.top1{
+    background:linear-gradient(
+        135deg,
+        #fbbf24,
+        #f59e0b
+    );
+    color:white;
+    transform:scale(1.03);
+    border:none;
+}
+
+.user-row.top2{
+    background:linear-gradient(
+        135deg,
+        #d1d5db,
+        #9ca3af
+    );
+    color:white;
+    border:none;
+}
+
+.user-row.top3{
+    background:linear-gradient(
+        135deg,
+        #d97706,
+        #92400e
+    );
+    color:white;
+    border:none;
+}
+
+.user-row.top1 .points,
+.user-row.top2 .points,
+.user-row.top3 .points{
+    color:white;
+}
+
+.stats-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.stats-card h2{
+    font-size:32px;
+    color:#10b981;
+}
+
+.stats-card p{
+    color:#64748b;
+    margin-top:5px;
+}
+
+.leaderboard-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.leaderboard-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.user-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px;
+    margin-bottom:12px;
+    border-radius:18px;
+    background:#f8fafc;
+    transition:.3s;
+    border:none;
+}
+
+.user-row:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.user-row:last-child{
+    border-bottom:none;
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.rank{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-weight:700;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.user-info{
+    display:flex;
+    flex-direction:column;
+}
+
+.user-name{
+    font-weight:600;
+}
+
+.user-dept{
+    font-size:12px;
+    color:#64748b;
+}
+
+.points{
+    font-weight:700;
+    color:#10b981;
+}
+
+.back-btn{
+    margin-bottom:20px;
+    background:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.loading{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+
+.achievement-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.progress-bar{
+    width:100%;
+    height:12px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='main_menu_pg.html'">
+
+        <i class="fas fa-arrow-left"></i>
+        Back
+
+    </button>
+
+    <div class="header-card">
+
+        <h1>
+            🏭 NPSB Gemba Walk
+        </h1>
+
+        <p>
+            Real-Time Leaderboard
+        </p>
+
+    </div>
+
+    <div class="stats-card">
+
+        <h2 id="totalPoints">
+            0
+        </h2>
+
+        <p>
+            Total Company Points
+        </p>
+
+    </div>
+
+    <div class="stats-card">
+
+    <h2 id="myPoints">
+        0
+    </h2>
+
+    <p>
+        My Points
+    </p>
+
+    </div>
+
+    <div class="leaderboard-card">
+
+        <div class="leaderboard-title">
+
+            🏆 Top Participants
+
+        </div>
+
+        <div id="leaderboard-list">
+
+            <div class="loading">
+
+                Loading leaderboard...
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="module">
+
+import { db, auth } from './firebaseConfig.js';
+
+import {
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    getDoc,
+    doc
+}
+from
+"https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+const leaderboardList =
+document.getElementById(
+    "leaderboard-list"
+);
+
+const totalPointsElement =
+document.getElementById(
+    "totalPoints"
+);
+
+const myPointsElement =
+document.getElementById(
+    "myPoints"
+);
+
+const q = query(
+    collection(db,"gemba_points"),
+    orderBy("totalPoints","desc")
+);
+
+onSnapshot(q, async (snapshot)=>{
+
+    let html = '';
+
+    let rank = 1;
+
+    let totalCompanyPoints = 0;
+
+    for (const docSnap of snapshot.docs) {
+
+    const pointsData =
+    docSnap.data();
+
+    const userDoc =
+    await getDoc(
+        doc(
+            db,
+            "users",
+            docSnap.id
+        )
+    );
+
+    const user =
+    userDoc.exists()
+    ? userDoc.data()
+    : {};
+
+    totalCompanyPoints +=
+    pointsData.totalPoints || 0;
+
+    let medal = '';
+
+    if(rank === 1){
+        medal = '🥇';
+    }
+    else if(rank === 2){
+        medal = '🥈';
+    }
+    else if(rank === 3){
+        medal = '🥉';
+    }
+    else{
+        medal = '#' + rank;
+    }
+
+    let rowClass = "";
+
+    if(rank === 1)
+        rowClass = "top1";
+    else if(rank === 2)
+        rowClass = "top2";
+    else if(rank === 3)
+        rowClass = "top3";
+
+    html += `
+    <div class="user-row ${rowClass}">
+
+        <div class="left">
+
+            <div class="rank">
+                ${medal}
+            </div>
+
+            <div class="user-info">
+
+                <div class="user-name">
+                    ${user.name || docSnap.id}
+                </div>
+
+                <div class="user-dept">
+                    ${user.department || 'NPSB'}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="points">
+            ${pointsData.totalPoints || 0} pts
+        </div>
+
+    </div>
+    `;
+
+rank++;
+
+}
+
+leaderboardList.innerHTML = html;
+
+totalPointsElement.textContent =
+totalCompanyPoints.toLocaleString();
+
+const currentUser =
+auth.currentUser;
+
+if(currentUser){
+
+    const myDoc =
+    snapshot.docs.find(
+        doc =>
+        doc.id === currentUser.uid
+    );
+
+    if(myDoc){
+
+        const myData =
+        myDoc.data();
+
+        myPointsElement.textContent =
+        myData.totalPoints || 0;
+
+    }
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

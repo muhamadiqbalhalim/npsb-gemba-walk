@@ -1,0 +1,380 @@
+<!doctype html>
+<html>
+  <head>
+    <title>NPSB Gemba Walk Scanner</title>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f8fafc;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      #reader {
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+      }
+
+      #status {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 12px;
+        background: white;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .back-btn{
+          margin-bottom:20px;
+          background:white;
+          border:none;
+          padding:12px 18px;
+          border-radius:12px;
+          cursor:pointer;
+          font-weight:600;
+          box-shadow:0 4px 12px rgba(0,0,0,.08);
+      }
+
+      .back-btn:hover{
+          background:#f1f5f9;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='main_menu_pg.html'">
+
+        ← Back
+
+    </button>
+    <h2>🏭 NPSB Gemba Walk Scanner</h2>
+
+    <div id="reader"></div>
+
+    <div id="status">Waiting for scan...</div>
+
+    <script type="module">
+      import { auth, db } from "./firebaseConfig.js";
+
+      import {
+        doc,
+        getDoc,
+        setDoc,
+        addDoc,
+        collection,
+        serverTimestamp,
+        getDocs,
+        query,
+        where,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+      const statusDiv = document.getElementById("status");
+
+      let scanLocked = false;
+
+      function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+
+        const dLat = ((lat2 - lat1) * Math.PI) / 180;
+
+        const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+      }
+
+      async function processCheckpoint(checkpointId) {
+        if (scanLocked) {
+          return;
+        }
+
+        scanLocked = true;
+
+        setTimeout(() => {
+          scanLocked = false;
+        }, 3000);
+
+        try {
+          const user = auth.currentUser;
+
+          if (!user) {
+            alert("User not logged in");
+
+            return;
+          }
+
+          const checkpointQuery = query(
+            collection(db, "checkpoints"),
+            where("qrSecret", "==", checkpointId),
+          );
+
+          const checkpointSnap = await getDocs(checkpointQuery);
+
+          if (checkpointSnap.empty) {
+            statusDiv.innerHTML = "❌ Invalid QR";
+
+            return;
+          }
+
+          const checkpointDoc = checkpointSnap.docs[0];
+
+          const checkpoint = checkpointDoc.data();
+
+          const pointsRef = doc(db, "gemba_points", user.uid);
+
+          const pointsSnap = await getDoc(pointsRef);
+
+          if (!pointsSnap.exists()) {
+            await setDoc(pointsRef, {
+              totalPoints: 0,
+              completedRoutes: 0,
+              currentRouteStep: 1,
+              lastCheckpoint: "",
+              createdAt: serverTimestamp(),
+            });
+
+            const freshSnap = await getDoc(pointsRef);
+          }
+
+          const currentPosition = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+
+          const distance = calculateDistance(
+            currentPosition.coords.latitude,
+            currentPosition.coords.longitude,
+
+            checkpoint.lat,
+            checkpoint.lng,
+          );
+
+          if (distance > checkpoint.radius) {
+            statusDiv.innerHTML = `
+❌ Outside Checkpoint Radius
+
+<br><br>
+
+Distance:
+${distance.toFixed(1)} m
+
+<br><br>
+
+Allowed:
+${checkpoint.radius} m
+`;
+
+            return;
+          }
+
+const freshSnap =
+await getDoc(pointsRef);
+
+const data =
+freshSnap.data() || {};
+
+const expectedStep =
+data.currentRouteStep || 1;
+
+/*
+ANTI DUPLICATE
+*/
+
+if(
+    checkpoint.id ===
+    data.lastCheckpoint
+){
+
+    statusDiv.innerHTML = `
+    ❌ Checkpoint Already Scanned
+
+    <br><br>
+
+    Please proceed to the next checkpoint.
+    `;
+
+    return;
+}
+
+/*
+ROUTE VALIDATION
+*/
+
+if(
+    checkpoint.routeOrder !==
+    expectedStep
+){
+
+    statusDiv.innerHTML = `
+    ❌ Wrong Route Sequence
+
+    <br><br>
+
+    Expected Route:
+
+    CP${String(expectedStep).padStart(3,'0')}
+    `;
+
+    return;
+}
+
+let totalPoints =
+data.totalPoints || 0;
+
+let completedRoutes =
+data.completedRoutes || 0;
+
+totalPoints +=
+checkpoint.points || 20;
+
+let nextStep =
+expectedStep + 1;
+
+let routeCompleted =
+false;
+
+/*
+LAST CHECKPOINT?
+*/
+
+const totalCheckpoints = 6;
+
+if(
+    checkpoint.routeOrder ===
+    totalCheckpoints
+){
+
+    routeCompleted = true;
+
+    completedRoutes++;
+
+    totalPoints += 100;
+
+    nextStep = 1;
+
+}
+
+          await setDoc(
+            pointsRef,
+            {
+              totalPoints: totalPoints,
+
+              completedRoutes: completedRoutes,
+
+              currentRouteStep: nextStep,
+
+              lastCheckpoint: checkpoint.id,
+
+              updatedAt: serverTimestamp(),
+            },
+            {
+              merge: true,
+            },
+          );
+
+        await addDoc(collection(db, "gemba_scans"), {
+            userId: user.uid,
+
+            checkpointId: checkpoint.id,
+
+            checkpointName: checkpoint.name,
+
+            points: checkpoint.points || 20,
+
+            distance:
+                Number(
+                    distance.toFixed(1)
+                ),
+
+            routeCompleted:
+                routeCompleted,
+
+            latitude:
+                checkpoint.lat,
+
+            longitude:
+                checkpoint.lng,
+
+            scanTime:
+                serverTimestamp(),
+        });
+
+          statusDiv.innerHTML = `
+        ✅ <b>${checkpoint.name}</b>
+
+        <br><br>
+
+        +${checkpoint.points || 20} Points
+
+        <br><br>
+
+        Total Points:
+        <b>${totalPoints}</b>
+
+        ${routeCompleted ? "<br><br>🏆 Route Completed (+100 Bonus)" : ""}
+        `;
+        } catch (error) {
+          console.error(error);
+
+          statusDiv.innerHTML = "❌ Error Processing Scan";
+        }
+      }
+
+      async function onScanSuccess(decodedText) {
+        await processCheckpoint(decodedText.trim());
+      }
+
+      const html5QrCode = new Html5Qrcode("reader");
+
+      Html5Qrcode.getCameras()
+        .then((devices) => {
+          if (!devices.length) {
+            statusDiv.innerHTML = `
+        ❌ No camera detected
+
+        <br><br>
+
+        Please use a device with a camera.
+        `;
+
+            return;
+          }
+
+          html5QrCode.start(
+            devices[0].id,
+            {
+              fps: 10,
+              qrbox: 250,
+            },
+            onScanSuccess,
+          );
+        })
+        .catch((error) => {
+          console.error(error);
+
+          statusDiv.innerHTML = "❌ Camera Error";
+        });
+    </script>
+  </body>
+</html>
