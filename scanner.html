@@ -34,50 +34,114 @@
         text-align: center;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
       }
-
-      .back-btn{
-          margin-bottom:20px;
-          background:white;
-          border:none;
-          padding:12px 18px;
-          border-radius:12px;
-          cursor:pointer;
-          font-weight:600;
-          box-shadow:0 4px 12px rgba(0,0,0,.08);
+      .popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
       }
 
-      .back-btn:hover{
-          background:#f1f5f9;
+      .popup-card {
+        background: white;
+        width: 90%;
+        max-width: 340px;
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+        animation: popupShow 0.25s ease;
+      }
+
+      .popup-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+      }
+
+      .popup-card h3 {
+        margin-bottom: 10px;
+      }
+
+      .popup-card p {
+        color: #475569;
+        line-height: 1.5;
+      }
+
+      .popup-card button {
+        margin-top: 20px;
+        width: 100%;
+        border: none;
+        background: #0f172a;
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+
+      @keyframes popupShow {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .back-btn {
+        margin-bottom: 20px;
+        background: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .back-btn:hover {
+        background: #f1f5f9;
       }
     </style>
   </head>
 
   <body>
-
     <button
-        class="back-btn"
-        onclick="window.location.href='main_menu_pg.html'">
-
-        ← Back
-
+      class="back-btn"
+      onclick="window.location.href = 'main_menu_pg.html'"
+    >
+      ← Back
     </button>
     <h2>🏭 NPSB Gemba Walk Scanner</h2>
 
+    <div style="text-align: center; margin-bottom: 15px">
+      <button id="switchCameraBtn" class="back-btn">📷 Switch Camera</button>
+    </div>
     <div id="reader"></div>
 
     <div id="status">Waiting for scan...</div>
 
+    <div id="popup" class="popup-overlay">
+      <div class="popup-card">
+        <div id="popupIcon" class="popup-icon">✅</div>
+
+        <h3 id="popupTitle">Success</h3>
+
+        <p id="popupMessage">Message</p>
+
+        <button onclick="closePopup()">OK</button>
+      </div>
+    </div>
     <script type="module">
       import { auth, db } from "./firebaseConfig.js";
-      import {
-          onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-        onAuthStateChanged(auth, (user) => {
-          if (!user) {
-            window.location.href = "login.html";
-          }
-        });
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
 
       import {
         doc,
@@ -92,7 +156,11 @@
       } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
       const statusDiv = document.getElementById("status");
+      let cameras = [];
 
+      let currentCameraIndex = 0;
+
+      let html5QrCode;
       let scanLocked = false;
 
       function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -113,6 +181,39 @@
 
         return R * c;
       }
+
+      function showPopup(icon, title, message) {
+        document.getElementById("popupIcon").innerHTML = icon;
+
+        document.getElementById("popupTitle").innerHTML = title;
+
+        document.getElementById("popupMessage").innerHTML = message;
+
+        document.getElementById("popup").style.display = "flex";
+      }
+
+      document
+        .getElementById("switchCameraBtn")
+        .addEventListener("click", async () => {
+          if (cameras.length < 2) {
+            showPopup("📷", "Only One Camera", "No secondary camera found.");
+
+            return;
+          }
+
+          currentCameraIndex++;
+
+          if (currentCameraIndex >= cameras.length) {
+            currentCameraIndex = 0;
+          }
+
+          await startCamera(currentCameraIndex);
+        });
+
+      function closePopup() {
+        document.getElementById("popup").style.display = "none";
+      }
+      window.closePopup = closePopup;
 
       async function processCheckpoint(checkpointId) {
         if (scanLocked) {
@@ -142,7 +243,7 @@
           const checkpointSnap = await getDocs(checkpointQuery);
 
           if (checkpointSnap.empty) {
-            statusDiv.innerHTML = "❌ Invalid QR";
+            showPopup("❌", "Invalid QR", "This QR code is not registered.");
 
             return;
           }
@@ -168,7 +269,11 @@
           }
 
           const currentPosition = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            });
           });
 
           const distance = calculateDistance(
@@ -180,109 +285,79 @@
           );
 
           if (distance > checkpoint.radius) {
-            statusDiv.innerHTML = `
-❌ Outside Checkpoint Radius
+            showPopup(
+              "📍",
+              "Outside Checkpoint Radius",
+              `
+    Distance:
+    ${distance.toFixed(1)}m
 
-<br><br>
-
-Distance:
-${distance.toFixed(1)} m
-
-<br><br>
-
-Allowed:
-${checkpoint.radius} m
-`;
+    Allowed:
+    ${checkpoint.radius}m
+    `,
+            );
 
             return;
           }
 
-const freshSnap =
-await getDoc(pointsRef);
+          const freshSnap = await getDoc(pointsRef);
 
-const data =
-freshSnap.data() || {};
+          const data = freshSnap.data() || {};
 
-const expectedStep =
-data.currentRouteStep || 1;
+          const expectedStep = data.currentRouteStep || 1;
 
-/*
+          /*
 ANTI DUPLICATE
 */
 
-if(
-    checkpoint.id ===
-    data.lastCheckpoint
-){
+          if (checkpoint.id === data.lastCheckpoint) {
+            showPopup(
+              "⚠️",
+              "Already Scanned",
+              "Please proceed to the next checkpoint.",
+            );
 
-    statusDiv.innerHTML = `
-    ❌ Checkpoint Already Scanned
+            return;
+          }
 
-    <br><br>
-
-    Please proceed to the next checkpoint.
-    `;
-
-    return;
-}
-
-/*
+          /*
 ROUTE VALIDATION
 */
 
-if(
-    checkpoint.routeOrder !==
-    expectedStep
-){
+          if (checkpoint.routeOrder !== expectedStep) {
+            showPopup(
+              "🚫",
+              "Wrong Sequence",
+              `Please scan CP${String(expectedStep).padStart(3, "0")}`,
+            );
+            return;
+          }
 
-    statusDiv.innerHTML = `
-    ❌ Wrong Route Sequence
+          let totalPoints = data.totalPoints || 0;
 
-    <br><br>
+          let completedRoutes = data.completedRoutes || 0;
 
-    Expected Route:
+          totalPoints += checkpoint.points || 20;
 
-    CP${String(expectedStep).padStart(3,'0')}
-    `;
+          let nextStep = expectedStep + 1;
 
-    return;
-}
+          let routeCompleted = false;
 
-let totalPoints =
-data.totalPoints || 0;
-
-let completedRoutes =
-data.completedRoutes || 0;
-
-totalPoints +=
-checkpoint.points || 20;
-
-let nextStep =
-expectedStep + 1;
-
-let routeCompleted =
-false;
-
-/*
+          /*
 LAST CHECKPOINT?
 */
 
-const totalCheckpoints = 6;
+          const totalCheckpoints = 6;
 
-if(
-    checkpoint.routeOrder ===
-    totalCheckpoints
-){
+          if (checkpoint.routeOrder === totalCheckpoints) {
+            routeCompleted = true;
 
-    routeCompleted = true;
+            completedRoutes++;
 
-    completedRoutes++;
+            totalPoints += 100;
 
-    totalPoints += 100;
-
-    nextStep = 1;
-
-}
+            nextStep = 1;
+          }
 
           await setDoc(
             pointsRef,
@@ -302,7 +377,7 @@ if(
             },
           );
 
-        await addDoc(collection(db, "gemba_scans"), {
+          await addDoc(collection(db, "gemba_scans"), {
             userId: user.uid,
 
             checkpointId: checkpoint.id,
@@ -311,42 +386,42 @@ if(
 
             points: checkpoint.points || 20,
 
-            distance:
-                Number(
-                    distance.toFixed(1)
-                ),
+            distance: Number(distance.toFixed(1)),
 
-            routeCompleted:
-                routeCompleted,
+            routeCompleted: routeCompleted,
 
-            latitude:
-                checkpoint.lat,
+            latitude: checkpoint.lat,
 
-            longitude:
-                checkpoint.lng,
+            longitude: checkpoint.lng,
 
-            scanTime:
-                serverTimestamp(),
-        });
+            scanTime: serverTimestamp(),
+          });
 
-          statusDiv.innerHTML = `
-        ✅ <b>${checkpoint.name}</b>
+showPopup(
+    "🏆",
+    checkpoint.name,
+    `
+    +${checkpoint.points || 20} Points
 
-        <br><br>
+    Total Points:
+    ${totalPoints}
 
-        +${checkpoint.points || 20} Points
+    ${routeCompleted ? "🏆 Route Completed! +100 Bonus" : ""}
+    `
+);
 
-        <br><br>
+if (navigator.vibrate) {
+    navigator.vibrate(200);
+}
 
-        Total Points:
-        <b>${totalPoints}</b>
+setTimeout(() => {
+    closePopup();
+}, 2000);
 
-        ${routeCompleted ? "<br><br>🏆 Route Completed (+100 Bonus)" : ""}
-        `;
         } catch (error) {
           console.error(error);
 
-          statusDiv.innerHTML = "❌ Error Processing Scan";
+          showPopup("❌", "Scan Error", error.message);
         }
       }
 
@@ -354,36 +429,34 @@ if(
         await processCheckpoint(decodedText.trim());
       }
 
-      const html5QrCode = new Html5Qrcode("reader");
+      html5QrCode = new Html5Qrcode("reader");
 
-      Html5Qrcode.getCameras()
-        .then((devices) => {
-          if (!devices.length) {
-            statusDiv.innerHTML = `
-        ❌ No camera detected
+      Html5Qrcode.getCameras().then(async (devices) => {
+        cameras = devices;
 
-        <br><br>
+        if (!devices.length) {
+          showPopup("📷", "No Camera", "Camera not detected.");
 
-        Please use a device with a camera.
-        `;
+          return;
+        }
 
-            return;
-          }
+        await startCamera(currentCameraIndex);
+      });
 
-          html5QrCode.start(
-            devices[0].id,
-            {
-              fps: 10,
-              qrbox: 250,
-            },
-            onScanSuccess,
-          );
-        })
-        .catch((error) => {
-          console.error(error);
+      async function startCamera(index) {
+        if (html5QrCode.isScanning) {
+          await html5QrCode.stop();
+        }
 
-          statusDiv.innerHTML = "❌ Camera Error";
-        });
+        await html5QrCode.start(
+          cameras[index].id,
+          {
+            fps: 10,
+            qrbox: 250,
+          },
+          onScanSuccess,
+        );
+      }
     </script>
   </body>
 </html>
