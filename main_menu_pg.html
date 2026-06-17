@@ -1,281 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPSB Gemba Walk Dashboard</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-<title>NPSB Gemba Walk Dashboard</title>
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
+        body {
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #1e1b4b 50%, var(--bg-dark) 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
 
-body{
-    background:linear-gradient(
-        135deg,
-        #0f172a,
-        #334155
-    );
-    min-height:100vh;
-    padding:20px;
-}
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
 
-.container{
-    max-width:500px;
-    margin:auto;
-}
+        /* --- HEADER STYLES --- */
+        .header {
+            background: rgba(37, 99, 235, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
 
-.header{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    margin-bottom:20px;
-    text-align:center;
-    box-shadow:0 5px 20px rgba(0,0,0,.15);
-}
+        .header::after {
+            content: '\f275'; /* Factory Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-size: 140px;
+            opacity: 0.04;
+            transform: rotate(15deg);
+        }
 
-.header h1{
-    color:#0f172a;
-    margin-bottom:10px;
-}
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
 
-.header p{
-    color:#64748b;
-}
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
 
-.card{
-    background:white;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.15);
-}
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #34d399, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseText 2s infinite alternate;
+        }
 
-.card h3{
-    margin-bottom:10px;
-    color:#0f172a;
-}
+        /* --- DASHBOARD GRID --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
 
-.menu-btn{
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:15px;
-    margin-bottom:15px;
-    cursor:pointer;
-    font-size:16px;
-    font-weight:600;
-    color:white;
-}
+        /* --- ACTION CARDS --- */
+        .action-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
 
-.scanner-btn{
-    background:#10b981;
-}
+        .action-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
 
-.leaderboard-btn{
-    background:#f59e0b;
-}
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
 
-.profile-btn{
-    background:#3b82f6;
-}
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
+        }
 
-.logout-btn{
-    background:#ef4444;
-}
+        /* Icon Colors */
+        .icon-scanner { background: linear-gradient(135deg, #34d399, #059669); }
+        .icon-leaderboard { background: linear-gradient(135deg, #fbbf24, #d97706); }
+        .icon-info { background: linear-gradient(135deg, #c084fc, #7e22ce); }
+        .icon-profile { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+        
+        .action-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
 
-.user-name{
-    font-size:24px;
-    font-weight:bold;
-    color:#10b981;
-}
+        /* --- LOGOUT BUTTON --- */
+        .logout-wrapper {
+            margin-top: 10px;
+        }
 
-</style>
+        .logout-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        }
+
+        /* Staggered loading for grid items */
+        .dashboard-grid .action-card:nth-child(1) { animation: fadeIn 0.4s ease-out 0.1s both; }
+        .dashboard-grid .action-card:nth-child(2) { animation: fadeIn 0.4s ease-out 0.2s both; }
+        .dashboard-grid .action-card:nth-child(3) { animation: fadeIn 0.4s ease-out 0.3s both; }
+        .dashboard-grid .action-card:nth-child(4) { animation: fadeIn 0.4s ease-out 0.4s both; }
+        .logout-wrapper { animation: fadeIn 0.4s ease-out 0.5s both; }
+
+    </style>
 </head>
 
 <body>
 
 <div class="container">
 
+    <!-- Header Section -->
     <div class="header">
-
         <h1>🏭 NPSB Gemba Walk</h1>
-
         <p>Welcome Back</p>
-
-        <br>
-
-        <div
-            id="userName"
-            class="user-name"
-        >
-            Loading...
+        <div id="userName" class="user-name">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 1rem; margin-right: 8px;"></i> Loading...
         </div>
+    </div>
+
+    <!-- Main Navigation Grid -->
+    <div class="dashboard-grid">
+        
+        <!-- Scanner Card (Spans full width) -->
+        <a href="scanner.html" class="action-card" style="grid-column: 1 / -1;">
+            <div class="action-icon icon-scanner">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="action-title">Start Gemba Walk</div>
+        </a>
+
+        <!-- Leaderboard Card -->
+        <a href="leaderboard.html" class="action-card">
+            <div class="action-icon icon-leaderboard">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="action-title">Rankings</div>
+        </a>
+
+        <!-- Program Info Card -->
+        <a href="gemba_info.html" class="action-card">
+            <div class="action-icon icon-info">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="action-title">Program Info</div>
+        </a>
+
+        <!-- Profile Card (Spans full width) -->
+        <a href="profile.html" class="action-card" style="grid-column: 1 / -1;">
+            <div class="action-icon icon-profile">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="action-title">My Profile</div>
+        </a>
 
     </div>
 
-    <div class="card">
-
-        <h3>🚶 Start Gemba Walk</h3>
-
-        <button
-            class="menu-btn scanner-btn"
-            onclick="location.href='scanner.html'"
-        >
-            Open Scanner
+    <!-- Logout Section -->
+    <div class="logout-wrapper">
+        <button id="logoutBtn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout Securely
         </button>
-
-    </div>
-
-    <div class="card">
-
-        <h3>🏆 Rankings</h3>
-
-        <button
-            class="menu-btn leaderboard-btn"
-            onclick="location.href='leaderboard.html'"
-        >
-            Leaderboard
-        </button>
-
-    </div>
-
-    <div class="card">
-
-        <h3>👤 My Profile</h3>
-
-        <button
-            class="menu-btn profile-btn"
-            onclick="location.href='profile.html'"
-        >
-            View Profile
-        </button>
-
-    </div>
-
-    <div class="card">
-
-        <button
-            id="logoutBtn"
-            class="menu-btn logout-btn"
-        >
-            Logout
-        </button>
-
     </div>
 
 </div>
 
+<!-- Firebase Logic -->
 <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyDxhduIWiv5xkuySgWlntuYnCweS3aRM5M",
+        authDomain: "npsbapp.firebaseapp.com",
+        projectId: "npsbapp",
+        storageBucket: "npsbapp.firebasestorage.app",
+        messagingSenderId: "218858501285",
+        appId: "1:218858501285:web:66781bee7880feb7d3094c",
+        measurementId: "G-5V4T7X09E3"
+    };
 
-import {
-    getAuth,
-    signOut,
-    onAuthStateChanged
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const userName = document.getElementById("userName");
 
-import {
-    getFirestore,
-    doc,
-    getDoc
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDxhduIWiv5xkuySgWlntuYnCweS3aRM5M",
-  authDomain: "npsbapp.firebaseapp.com",
-  projectId: "npsbapp",
-  storageBucket: "npsbapp.firebasestorage.app",
-  messagingSenderId: "218858501285",
-  appId: "1:218858501285:web:66781bee7880feb7d3094c",
-  measurementId: "G-5V4T7X09E3"
-};
-
-const app =
-initializeApp(
-    firebaseConfig
-);
-
-const auth =
-getAuth(app);
-
-const db =
-getFirestore(app);
-
-const userName =
-document.getElementById(
-    "userName"
-);
-
-onAuthStateChanged(
-    auth,
-    async(user)=>{
-
-        if(!user){
-
-            window.location.href =
-            "login.html";
-
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
             return;
         }
 
-        const userDoc =
-        await getDoc(
-            doc(
-                db,
-                "users",
-                user.uid
-            )
-        );
+        const userDoc = await getDoc(doc(db, "users", user.uid));
 
-        if(
-            userDoc.exists()
-        ){
-
-            const data =
-            userDoc.data();
-
-            userName.innerHTML =
-            data.name ||
-            user.email;
-
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            userName.innerHTML = data.name || user.email;
+        } else {
+            userName.innerHTML = user.email;
         }
+    });
 
-    }
-);
-
-document
-.getElementById(
-    "logoutBtn"
-)
-.addEventListener(
-    "click",
-    async()=>{
-
-        await signOut(
-            auth
-        );
-
-        window.location.href =
-        "login.html";
-
-    }
-);
-
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+    });
 </script>
 
 </body>

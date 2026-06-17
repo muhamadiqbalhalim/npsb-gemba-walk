@@ -120,8 +120,6 @@
     </div>
     <div id="reader"></div>
 
-    <div id="status">Waiting for scan...</div>
-
     <div id="popup" class="popup-overlay">
       <div class="popup-card">
         <div id="popupIcon" class="popup-icon">✅</div>
@@ -155,7 +153,6 @@
         where,
       } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-      const statusDiv = document.getElementById("status");
       let cameras = [];
 
       let currentCameraIndex = 0;
