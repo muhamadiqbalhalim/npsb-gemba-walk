@@ -8,14 +8,14 @@
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+            --primary: #10b981; 
+            --primary-dark: #059669;
             --secondary: #0f172a;
             --accent: #f59e0b;
             --text-main: #1e293b;
             --text-light: #64748b;
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #eef2ff 100%);
-            --hero-gradient: linear-gradient(135deg, #2563eb, #4f46e5);
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #d1fae5 50%, #eef2ff 100%);
+            --hero-gradient: linear-gradient(135deg, #059669, #10b981);
             --accent-green: #10b981;
             --gold: #fbbf24;
             --silver: #cbd5e1;
@@ -27,7 +27,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
@@ -70,7 +70,7 @@
             top: 20px;
             left: 20px;
             z-index: 999;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             color: var(--secondary);
             text-decoration: none;
@@ -83,8 +83,9 @@
 
         .back-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15);
             background: #fff;
+            color: var(--primary-dark);
         }
 
         /* --- HERO SECTION --- */
@@ -95,7 +96,7 @@
             margin: 40px 20px;
             padding: 80px 40px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.25);
             position: relative;
             overflow: hidden;
         }
@@ -109,7 +110,7 @@
 
         .hero p {
             font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 30px;
         }
 
@@ -132,7 +133,7 @@
 
         /* --- GLASS CARDS --- */
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
             padding: 30px;
@@ -143,7 +144,7 @@
 
         .glass-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.1);
         }
 
         /* --- GRID LAYOUTS --- */
@@ -153,7 +154,7 @@
             gap: 25px;
         }
 
-        /* --- RULES SECTION --- */
+        /* --- RULES & TABLES SECTION --- */
         .rules-list {
             list-style: none;
         }
@@ -171,6 +172,44 @@
             font-size: 1.3rem;
         }
 
+        .schedule-table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+            background: white;
+        }
+
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .schedule-table th {
+            background: #f8fafc;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .schedule-table td strong {
+            color: var(--primary-dark);
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .schedule-table td small {
+            color: var(--text-light);
+        }
+
         /* --- REWARDS & IMAGES --- */
         .img-placeholder {
             width: 100%;
@@ -180,7 +219,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            overflow: hidden; /* Ensures image stays within rounded corners */
+            overflow: hidden;
         }
         
         .img-placeholder img {
@@ -194,7 +233,7 @@
             color: var(--secondary);
             font-size: 1.2rem;
         }
-
+        
         /* --- DISCLAIMER --- */
         .disclaimer {
             text-align: center;
@@ -226,6 +265,16 @@
             border: 6px solid #ffffff;
         }
 
+        /* --- SCORING HIGHLIGHT --- */
+        .score-highlight {
+            background: var(--primary-dark);
+            color: white;
+            text-align: center;
+            grid-column: 1 / -1;
+            font-size: 1.5rem;
+            padding: 40px;
+        }
+
         /* --- DYNAMIC LEADERBOARD STYLES --- */
         .user-row {
             display: flex;
@@ -234,33 +283,33 @@
             padding: 18px 24px;
             margin-bottom: 15px;
             border-radius: 16px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: slideUp 0.5s ease backwards;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .user-row:hover {
             transform: scale(1.01) translateX(5px);
-            background: #ffffff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
-            border-color: #cbd5e1;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.08);
+            border-color: #a7f3d0;
         }
 
         .user-row.top1 { 
             border-left: 5px solid var(--gold); 
-            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, #ffffff 100%);
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.05) 0%, #ffffff 100%);
             border-top: 1px solid rgba(251, 191, 36, 0.2);
             border-right: 1px solid rgba(251, 191, 36, 0.2);
             border-bottom: 1px solid rgba(251, 191, 36, 0.2);
         }
         .user-row.top2 { 
             border-left: 5px solid #94a3b8; 
-            background: linear-gradient(90deg, rgba(148, 163, 184, 0.1) 0%, #ffffff 100%);
+            background: linear-gradient(90deg, rgba(148, 163, 184, 0.05) 0%, #ffffff 100%);
         }
         .user-row.top3 { 
             border-left: 5px solid var(--bronze); 
-            background: linear-gradient(90deg, rgba(217, 119, 6, 0.1) 0%, #ffffff 100%);
+            background: linear-gradient(90deg, rgba(217, 119, 6, 0.05) 0%, #ffffff 100%);
         }
 
         .left { display: flex; align-items: center; gap: 20px; }
@@ -269,7 +318,7 @@
             width: 48px;
             height: 48px;
             border-radius: 14px;
-            background: #ffffff;
+            background: #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -303,7 +352,7 @@
         .accordion {
             cursor: pointer;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.85);
             margin-bottom: 10px;
             border-radius: 12px;
             font-weight: 600;
@@ -312,24 +361,26 @@
             justify-content: space-between;
             align-items: center;
             transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid #e2e8f0;
         }
 
         .accordion:hover {
             background: #fff;
+            border-color: var(--primary);
         }
 
         .accordion.active {
             background: var(--primary);
             color: #fff;
             border-radius: 12px 12px 0 0;
+            border-color: var(--primary);
         }
 
         .content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out, padding 0.3s ease;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.7);
             border-radius: 0 0 12px 12px;
             padding: 0 20px;
             margin-bottom: 10px;
@@ -338,7 +389,7 @@
         .content.show {
             padding: 20px;
             max-height: 200px;
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid #e2e8f0;
             border-top: none;
         }
 
@@ -349,15 +400,6 @@
             color: var(--text-light);
             font-weight: 500;
             margin-top: 20px;
-        }
-
-        /* --- SCORING HIGHLIGHT --- */
-        .score-highlight {
-            background: var(--primary-dark);
-            color: white;
-            text-align: center;
-            grid-column: 1 / -1;
-            font-size: 1.5rem;
         }
 
         /* Animations */
@@ -381,141 +423,195 @@
 <body>
 
     <a href="main_menu_pg.html" class="back-btn">
-        <i class="fas fa-arrow-left"></i> Home
+        <i class="fas fa-arrow-left"></i> <span data-translate="home">Home</span>
     </a>
 
     <section class="hero">
-        <h1>🏭 Gemba Walk Challenge</h1>
-        <p>Explore your facility. Scan checkpoints. Earn points. Win the rewards.</p>
+        <h1 data-translate="gembaWalk">🏭 Gemba Walk Challenge</h1>
+        <p data-translate="exploreFacility">Explore your facility. Scan checkpoints. Earn points. Win the rewards.</p>
         <div class="hero-stats">
-            <div class="stat-box">📍 6 Checkpoints</div>
-            <div class="stat-box">🏆 220 pts / Route</div>
-            <div class="stat-box">⏱️ Daily Resets</div>
+            <div class="stat-box">📍 6 <span data-translate="checkpoints">Checkpoints</span></div>
+            <div class="stat-box">🏆 50 <span data-translate="pointsPerRoute">pts / Route</span></div>
+            <div class="stat-box">⏱️ <span data-translate="dailyResets">Daily Resets</span></div>
         </div>
     </section>
 
     <div class="container">
         
-        <h2>How It Works</h2>
+        <h2 data-translate="howItWorks">How It Works</h2>
         <div class="grid">
             <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 10px;">📱</div>
-                <h3>1. Scan QR</h3>
-                <p style="color: var(--text-light); margin-top: 10px;">Find and scan the codes at designated checkpoints.</p>
+                <h3 data-translate="scanQr">1. Scan QR</h3>
+                <p style="color: var(--text-light); margin-top: 10px;" data-translate="scanQrDesc">Find and scan the codes at designated checkpoints.</p>
             </div>
             <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 10px;">🗺️</div>
-                <h3>2. Follow Route</h3>
-                <p style="color: var(--text-light); margin-top: 10px;">Proceed in the correct numerical order.</p>
+                <h3 data-translate="followRoute">2. Follow Route</h3>
+                <p style="color: var(--text-light); margin-top: 10px;" data-translate="followRouteDesc">Proceed in the correct numerical order.</p>
             </div>
             <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 10px;">⚡</div>
-                <h3>3. Earn Points</h3>
-                <p style="color: var(--text-light); margin-top: 10px;">Collect points for every successful scan.</p>
+                <h3 data-translate="completeDaily">3. Complete Daily</h3>
+                <p style="color: var(--text-light); margin-top: 10px;" data-translate="completeDailyDesc">Finish all 6 checkpoints before midnight to secure your points.</p>
             </div>
             <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 10px;">🏆</div>
-                <h3>4. Climb Rank</h3>
-                <p style="color: var(--text-light); margin-top: 10px;">Top the monthly leaderboard to win prizes.</p>
+                <h3 data-translate="climbRank">4. Climb Rank</h3>
+                <p style="color: var(--text-light); margin-top: 10px;" data-translate="climbRankDesc">Top the monthly leaderboard to win prizes.</p>
             </div>
         </div>
 
-        <h2>📋 Program Rules</h2>
+        <h2 data-translate="programRules">📋 Program Rules</h2>
         <div class="glass-card">
             <ul class="rules-list">
-                <li><span>✅</span> Scan checkpoints in exact sequence (1 through 6).</li>
-                <li><span>✅</span> Each individual checkpoint awards 20 points.</li>
-                <li><span>✅</span> Earn a massive 100 bonus points after completing the full route.</li>
-                <li><span>❌</span> Out-of-sequence scans will be rejected by the system.</li>
-                <li><span>❌</span> GPS validation is required (You must be physically present).</li>
+                <li data-translate="rule1"><span>✅</span> Participate during break time, before shift or after shift only.</li>
+                <li data-translate="rule2"><span>✅</span> Complete all 6 checkpoints in the correct sequence on the same day to earn 50 points.</li>
+                <li data-translate="rule3"><span>✅</span> Follow all safety requirements while walking the routes.</li>
+                <li data-translate="rule4"><span>❌</span> Do not participate during active working hours.</li>
+                <li data-translate="rule5"><span>❌</span> Incomplete routes will reset at midnight (points will not be awarded).</li>
             </ul>
         </div>
 
-        <h2>Route Journey</h2>
+        <h2 data-translate="permittedHours">⏱️ Permitted Scanning Hours</h2>
+        <div class="glass-card">
+            <p style="color: var(--text-light); margin-bottom: 15px; font-weight: 500;" data-translate="permittedHoursDesc">
+                Scanning is strictly allowed only during your designated break times based on your assigned Sticker Group. 
+                <i>*Night shift follows the exact same break duration logic (AM to PM).</i>
+            </p>
+            
+            <div class="schedule-table-wrapper">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th data-translate="groupSticker">Group (Sticker)</th>
+                            <th data-translate="morningBreak">Morning Break</th>
+                            <th data-translate="lunchMonThu">Lunch (Mon-Thu)</th>
+                            <th data-translate="lunchFri">Lunch (Friday)</th>
+                            <th data-translate="eveningMonThu">Evening (Mon-Thu)</th>
+                            <th data-translate="eveningFri">Evening (Friday)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Group 1</strong><small>Mezzanine Floor, PPIC Team</small></td>
+                            <td>9:45 AM - 10:00 AM</td>
+                            <td>12:00 PM - 12:45 PM</td>
+                            <td rowspan="3" style="vertical-align: middle; background-color: #f8fafc;">12:30 PM - 2:30 PM</td>
+                            <td>3:00 PM - 3:15 PM</td>
+                            <td>3:15 PM - 3:30 PM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Group 2</strong><small>Assy Ground Floor, ED</small></td>
+                            <td>10:05 AM - 10:20 AM</td>
+                            <td>12:30 PM - 1:15 PM</td>
+                            <td>3:15 PM - 3:30 PM</td>
+                            <td>3:30 PM - 3:45 PM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Group 3</strong><small>PPIC, Production, QA, ME, Corporate</small></td>
+                            <td>10:25 AM - 10:40 AM</td>
+                            <td>1:00 PM - 1:45 PM</td>
+                            <td>3:30 PM - 3:45 PM</td>
+                            <td>3:45 PM - 4:00 PM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h2 data-translate="routeJourney">Route Journey</h2>
         
         <div class="map-container">
-            <img src="public/routes.png" alt="Facility Top View Route Map">
+            <img src="pictures/routes.png" alt="Facility Top View Route Map">
         </div>
 
         <div class="grid" id="route-container">
-            <!-- Checkpoints generated by JS -->
+            <!-- Injected via JavaScript -->
         </div>
 
-        <h2>Rewards & Scoring</h2>
+        <h2 data-translate="rewardsScoring">Rewards & Scoring</h2>
         <div class="grid">
-            <div class="glass-card"><h3>📍 Checkpoint 1 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
-            <div class="glass-card"><h3>📍 Checkpoint 2 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
-            <div class="glass-card"><h3>📍 Checkpoint 3 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
-            <div class="glass-card"><h3>📍 Checkpoint 4 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
-            <div class="glass-card"><h3>📍 Checkpoint 5 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
-            <div class="glass-card"><h3>📍 Checkpoint 6 <span style="float:right; color:var(--primary);">+20 pts</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 1 <span style="float:right; color:var(--text-light); font-size: 0.9rem;" data-translate="progressSaved">Progress Saved</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 2 <span style="float:right; color:var(--text-light); font-size: 0.9rem;" data-translate="progressSaved">Progress Saved</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 3 <span style="float:right; color:var(--text-light); font-size: 0.9rem;" data-translate="progressSaved">Progress Saved</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 4 <span style="float:right; color:var(--text-light); font-size: 0.9rem;" data-translate="progressSaved">Progress Saved</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 5 <span style="float:right; color:var(--text-light); font-size: 0.9rem;" data-translate="progressSaved">Progress Saved</span></h3></div>
+            <div class="glass-card"><h3>📍 Checkpoint 6 <span style="float:right; color:var(--primary); font-size: 1.1rem;">+50 pts</span></h3></div>
             <div class="glass-card score-highlight">
-                <h3>⭐ Route Completion Bonus = 100 pts</h3>
-                <p style="margin-top: 10px; font-weight: normal;">Total Potential Route Value = 220 pts</p>
+                <h3 data-translate="dailyCompletion">⭐ Daily Route Completion = 50 pts</h3>
+                <p style="margin-top: 12px; font-weight: 500; font-size: 1.05rem; opacity: 0.9;" data-translate="dailyCompletionDesc">You must scan all 6 checkpoints in the correct sequence on the same day to earn the 50 points. Incomplete routes reset at midnight.</p>
             </div>
         </div>
 
-        <h2>Programme Rewards</h2>
+        <h2 data-translate="programmeRewards">Programme Rewards</h2>
         <div class="grid">
             <div class="glass-card reward-card">
                 <div class="img-placeholder" style="background: linear-gradient(135deg, #fcd34d, #f59e0b);">
-                    <img src="public/Winner1.svg" alt="Champion Reward">
+                    <img src="pictures/Winner1.svg" alt="Champion Reward">
                 </div>
-                <h3>🥇 Champion</h3>
+                <h3 data-translate="champion">🥇 Champion</h3>
             </div>
             <div class="glass-card reward-card">
                 <div class="img-placeholder" style="background: linear-gradient(135deg, #e2e8f0, #94a3b8);">
-                    <img src="public/Winner2.svg" alt="Runner-Up Reward">
+                    <img src="pictures/Winner1.svg" alt="Champion Reward">
                 </div>
-                <h3>🥈 Runner-Up</h3>
+                <h3 data-translate="runnerUp">🥈 Runner-Up</h3>
             </div>
             <div class="glass-card reward-card">
                 <div class="img-placeholder" style="background: linear-gradient(135deg, #fdba74, #ea580c);">
-                    <img src="public/Winner3.svg" alt="3rd Place Reward">
+                    <img src="pictures/Winner3.svg" alt="Champion Reward">
                 </div>
                 <h3>🥉 3rd Place</h3>
             </div>
         </div>
-        <!-- DISCLAIMER ADDED HERE -->
+        
         <p class="disclaimer">
             <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 5px;"></i> 
-            <strong>Disclaimer:</strong> Winners are free to choose any brand of watch they prefer. The images shown are for illustration purposes only.
+            <strong data-translate="disclaimer">Disclaimer:</strong> <span data-translate="disclaimerDesc">Winners are free to choose any brand of watch they prefer. The images shown are for illustration purposes only.</span>
         </p>
 
-        <h2>Live Leaderboard</h2>
+        <h2 data-translate="liveLeaderboard">Live Leaderboard</h2>
         <div class="glass-card">
             <div id="live-leaderboard-list">
                 <div class="loading pulse-text">
                     <i class="fas fa-circle-notch fa-spin" style="margin-right: 8px; font-size: 20px;"></i><br><br>
-                    Syncing live data...
+                    <span data-translate="loadingText">Syncing live data...</span>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 20px;">
-                <a href="leaderboard.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">View Full Leaderboard →</a>
+                <a href="gembawalkleaderboard.html" style="color: var(--primary); font-weight: 600; text-decoration: none;" data-translate="viewFullLeaderboard">View Full Leaderboard →</a>
             </div>
         </div>
 
-        <h2>Frequently Asked Questions</h2>
+        <h2 data-translate="faqTitle">Frequently Asked Questions</h2>
         
         <div class="accordion" onclick="toggle(this)">
-            What is a Gemba Walk? <span class="icon">+</span>
+            <span data-translate="faq1Q">What is a Gemba Walk?</span> <span class="icon">+</span>
         </div>
         <div class="content">
-            <p>A Gemba Walk is a management tool used to observe actual work processes, engage with employees, gain knowledge about the work process, and explore opportunities for continuous improvement.</p>
+            <p data-translate="faq1A">A Gemba Walk is a management tool used to observe actual work processes, engage with employees, gain knowledge about the work process, and explore opportunities for continuous improvement.</p>
         </div>
         
         <div class="accordion" onclick="toggle(this)">
-            How are winners selected? <span class="icon">+</span>
+            <span data-translate="faq2Q">How are winners selected?</span> <span class="icon">+</span>
         </div>
         <div class="content">
-            <p>Winners are selected at the end of the event based on the highest accumulated points on the leaderboard. Ties are broken by whoever completed their routes the fastest.</p>
+            <p data-translate="faq2A">Winners are selected at the end of the event based on the highest accumulated points on the leaderboard. Ties are broken by whoever completed their routes the fastest.</p>
         </div>
 
         <div class="accordion" onclick="toggle(this)">
-            What happens if I scan a checkpoint out of order? <span class="icon">+</span>
+            <span data-translate="faq3Q">What happens if I scan a checkpoint out of order?</span> <span class="icon">+</span>
         </div>
         <div class="content">
-            <p>The system will reject the scan and notify you to proceed to the correct previous checkpoint. You will not lose points, but you cannot progress until the sequence is corrected.</p>
+            <p data-translate="faq3A">The system will reject the scan and notify you to proceed to the correct previous checkpoint. You will not lose points, but you cannot progress until the sequence is corrected.</p>
+        </div>
+
+        <div class="accordion" onclick="toggle(this)">
+            <span data-translate="faq4Q">Can I continue my progress tomorrow?</span> <span class="icon">+</span>
+        </div>
+        <div class="content">
+            <p data-translate="faq4A">No. You must complete all 6 checkpoints within the same day. Any incomplete progress will reset automatically at midnight.</p>
         </div>
 
     </div>
@@ -524,28 +620,44 @@
         <p>© 2026 Gemba Walk Program | Namicoh Group. All rights reserved.</p>
     </footer>
 
-    <script>
+    <script type="module">
+        import { initializeWithDetection, translateElement } from './languageTranslator.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeWithDetection();
+        });
+
         // --- Populate Route Journey ---
         const routeContainer = document.getElementById('route-container');
-        const locations = ['Warehouse Entry', 'Assembly Line A', 'Quality Testing', 'Packaging Station', 'Loading Dock', 'Break Room'];
-        
+        const locations = ['Main Lobby NPSB', 'Warehouse FG', 'Ramp Mainplant', 'Waste Area', 'Electrical Substation', 'Warehouse CKD'];
+        const images = ['Checkpoint 1.jpeg', 'Checkpoint 2.jpeg', 'Checkpoint 3.jpeg', 'Checkpoint 4.jpeg', 'Checkpoint 5.jpeg', 'Checkpoint 6.jpeg'];
+        const descriptions = [
+            'Located in the wall cabinet of the PA System.',
+            'In front of the main production notice board (Line A).',
+            'On the Quality Control (QC) room desk, near the entrance.',
+            'Near the waste area at the back of the factory.',
+            'At the front of the factory near the water pump tank.',
+            'At the entrance of the building.'
+        ];
+
         for(let i = 0; i < 6; i++) {
             const card = document.createElement('div');
             card.className = 'glass-card';
             card.innerHTML = `
-                <img src="checkpoint_${i + 1}.jpg" alt="Checkpoint ${i + 1} Image" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #e2e8f0;">
-                <div style="color: var(--primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 10px;">Checkpoint ${i + 1}</div>
+                <img src="pictures/${images[i]}" alt="Checkpoint ${i + 1} Image" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #e2e8f0;">
+                <div style="color: var(--primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 10px;">
+                    <span data-translate="checkpointLabel">Checkpoint</span> ${i + 1}
+                </div>
                 <h3 style="margin-bottom: 5px;">${locations[i]}</h3>
-                <p style="color: var(--text-light); font-size: 0.9rem;">Scan required to proceed.</p>
+                <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.4;" data-translate="cpDesc${i + 1}">${descriptions[i]}</p>
             `;
             routeContainer.appendChild(card);
+            translateElement(card);
         }
 
-        // --- FAQ Accordion Logic ---
         function toggle(el) {
             const allAccordions = document.querySelectorAll('.accordion');
             const allContents = document.querySelectorAll('.content');
-            
             allAccordions.forEach((acc, index) => {
                 if (acc !== el) {
                     acc.classList.remove('active');
@@ -553,60 +665,33 @@
                     allContents[index].classList.remove('show');
                 }
             });
-
             const content = el.nextElementSibling;
             const icon = el.querySelector('.icon');
-            
             el.classList.toggle('active');
             content.classList.toggle('show');
-            
-            if (el.classList.contains('active')) {
-                icon.innerText = '−';
-            } else {
-                icon.innerText = '+';
-            }
+            icon.innerText = el.classList.contains('active') ? '−' : '+';
         }
+        window.toggle = toggle;
     </script>
 
     <script type="module">
         import { db } from './firebaseConfig.js';
         import { collection, query, orderBy, limit, onSnapshot, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+        import { translateElement } from './languageTranslator.js';
 
         const leaderboardList = document.getElementById("live-leaderboard-list");
-
-        // Fetch top 5 for the info page
         const q = query(collection(db, "gemba_points"), orderBy("totalPoints", "desc"), limit(5));
 
         onSnapshot(q, async (snapshot) => {
             let html = '';
             let rank = 1;
-
             for (const docSnap of snapshot.docs) {
                 const pointsData = docSnap.data();
-                
-                // FILTER: Skip anyone with 0 or less points
-                if ((pointsData.totalPoints || 0) <= 0) {
-                    continue;
-                }
-                
-                // Fetch User Details
                 const userDoc = await getDoc(doc(db, "users", docSnap.id));
                 const user = userDoc.exists() ? userDoc.data() : {};
-
-                // Medal Logic
-                let medal = '';
-                if (rank === 1) medal = '🥇';
-                else if (rank === 2) medal = '🥈';
-                else if (rank === 3) medal = '🥉';
-                else medal = rank;
-
-                // Row Class Logic
-                let rowClass = "";
-                if (rank === 1) rowClass = "top1";
-                else if (rank === 2) rowClass = "top2";
-                else if (rank === 3) rowClass = "top3";
-
-                // Generate HTML Row
+                let medal = rank <= 3 ? ['🥇', '🥈', '🥉'][rank-1] : rank;
+                let rowClass = rank <= 3 ? `top${rank}` : "";
+                
                 html += `
                 <div class="user-row ${rowClass}">
                     <div class="left">
@@ -617,24 +702,11 @@
                         </div>
                     </div>
                     <div class="points">${pointsData.totalPoints || 0} pts</div>
-                </div>
-                `;
-                
+                </div>`;
                 rank++;
             }
-
-            // Check if HTML is empty (meaning no one has > 0 points)
-            if (html === '') {
-                leaderboardList.innerHTML = `
-                    <div class="loading">
-                        <i class="fas fa-clipboard-list" style="font-size: 32px; margin-bottom: 15px; display:block; opacity: 0.5;"></i>
-                        No participants yet. Be the first to scan!
-                    </div>
-                `;
-                return;
-            }
-
-            leaderboardList.innerHTML = html;
+            leaderboardList.innerHTML = html || '<div class="loading" data-translate="noParticipants">No participants yet.</div>';
+            translateElement(leaderboardList);
         });
     </script>
 </body>

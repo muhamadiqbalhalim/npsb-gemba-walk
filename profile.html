@@ -1,380 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>NPSB Profile</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    background:linear-gradient(
-        135deg,
-        #0f172a,
-        #334155
-    );
-    min-height:100vh;
-    padding:20px;
-}
-
-.container{
-    max-width:500px;
-    margin:auto;
-}
-
-.profile-card{
-    background:white;
-    border-radius:25px;
-    padding:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-}
-
-.avatar{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background:#10b981;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:38px;
-    font-weight:bold;
-    margin:auto;
-    margin-bottom:15px;
-}
-
-.name{
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-    color:#0f172a;
-}
-
-.department{
-    text-align:center;
-    color:#64748b;
-    margin-bottom:25px;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-bottom:20px;
-}
-
-.stat-box{
-    background:#f8fafc;
-    padding:18px;
-    border-radius:15px;
-    text-align:center;
-}
-
-.stat-number{
-    font-size:26px;
-    font-weight:bold;
-    color:#10b981;
-}
-
-.stat-label{
-    color:#64748b;
-    font-size:13px;
-}
-
-.info-card{
-    background:#f8fafc;
-    border-radius:15px;
-    padding:15px;
-    margin-bottom:12px;
-}
-
-.label{
-    font-size:12px;
-    color:#64748b;
-}
-
-.value{
-    font-size:16px;
-    font-weight:600;
-    margin-top:5px;
-}
-
-.btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:15px;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-    margin-top:10px;
-}
-
-.back-btn{
-    background:#3b82f6;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPSB Profile</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+        body { background:linear-gradient(135deg, #0f172a, #334155); min-height:100vh; padding:20px; }
+        .container { max-width:500px; margin:auto; }
+        .profile-card { background:white; border-radius:25px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,.15); }
+        .avatar { width:100px; height:100px; border-radius:50%; background:#10b981; color:white; display:flex; align-items:center; justify-content:center; font-size:38px; font-weight:bold; margin:auto; margin-bottom:15px; }
+        .name { text-align:center; font-size:24px; font-weight:bold; color:#0f172a; }
+        .department { text-align:center; color:#64748b; margin-bottom:25px; }
+        .stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+        .stat-box { background:#f8fafc; padding:18px; border-radius:15px; text-align:center; }
+        .stat-number { font-size:26px; font-weight:bold; color:#10b981; }
+        .stat-label { color:#64748b; font-size:13px; }
+        .info-card { background:#f8fafc; border-radius:15px; padding:15px; margin-bottom:12px; }
+        .label { font-size:12px; color:#64748b; }
+        .value { font-size:16px; font-weight:600; margin-top:5px; width:100%; border:none; background:transparent; }
+        .btn { width:100%; padding:15px; border:none; border-radius:15px; color:white; font-weight:600; cursor:pointer; margin-top:10px; }
+        .back-btn { background:#3b82f6; }
+    </style>
 </head>
 
 <body>
-
 <div class="container">
+    <div class="profile-card">
+        <div class="avatar" id="avatar">U</div>
+        <div class="name" id="fullName">Loading...</div>
+        <div class="department" id="department">Loading...</div>
 
-<div class="profile-card">
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="totalPoints">0</div>
+                <div class="stat-label">Total Points</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="totalScans">0</div>
+                <div class="stat-label">Total Scans</div>
+            </div>
+        </div>
 
-<div
-class="avatar"
-id="avatar"
->
-U
-</div>
+        <div class="info-card"><div class="label">Employee ID</div><div class="value" id="employeeId">-</div></div>
+        <div class="info-card"><div class="label">Department</div><div class="value" id="department2">-</div></div>
+        <div class="info-card"><div class="label">Email</div><div class="value" id="email">-</div></div>
+        <div class="info-card"><div class="label">Phone Number</div><div class="value" id="phone">-</div></div>
+        <div class="info-card">
+            <div class="label">Sticker Group (Set once only)</div>
+            <input type="text" id="editStickerGroup" class="value" placeholder="Enter your group...">
+        </div>
 
-<div
-class="name"
-id="fullName"
->
-Loading...
-</div>
-
-<div
-class="department"
-id="department"
->
-Loading...
-</div>
-
-<div class="stats">
-
-<div class="stat-box">
-<div
-class="stat-number"
-id="totalPoints"
->
-0
-</div>
-<div class="stat-label">
-Total Points
-</div>
-</div>
-
-<div class="stat-box">
-<div
-class="stat-number"
-id="totalScans"
->
-0
-</div>
-<div class="stat-label">
-Total Scans
-</div>
-</div>
-
-</div>
-
-<div class="info-card">
-<div class="label">Employee ID</div>
-<div class="value" id="employeeId">-</div>
-</div>
-
-<div class="info-card">
-<div class="label">Department</div>
-<div class="value" id="department2">-</div>
-</div>
-
-<div class="info-card">
-<div class="label">Email</div>
-<div class="value" id="email">-</div>
-</div>
-
-<div class="info-card">
-<div class="label">Phone Number</div>
-<div class="value" id="phone">-</div>
-</div>
-
-<button
-class="btn back-btn"
-onclick="window.location.href='main_menu_pg.html'"
->
-Back To Home
-</button>
-
-</div>
-
+        <button class="btn" id="saveBtn" style="background:#10b981;">Save Group</button>
+        <button class="btn back-btn" onclick="window.location.href='main_menu_pg.html'">Back To Home</button>
+    </div>
 </div>
 
 <script type="module">
+    import { auth, db } from './firebaseConfig.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { doc, getDoc, getDocs, collection, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) { window.location.href = "login.html"; return; }
 
-import {
-getAuth,
-onAuthStateChanged,
-signOut
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        const stickerInput = document.getElementById("editStickerGroup");
+        const saveBtn = document.getElementById("saveBtn");
 
-import {
-getFirestore,
-doc,
-getDoc,
-collection,
-query,
-where,
-getDocs
-}
-from
-"https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            document.getElementById("fullName").innerHTML = (data.name || "") + " " + (data.lastName || "");
+            document.getElementById("department").innerHTML = data.department || "-";
+            document.getElementById("department2").innerHTML = data.department || "-";
+            document.getElementById("employeeId").innerHTML = data.employeeId || "-";
+            document.getElementById("email").innerHTML = data.email || "-";
+            document.getElementById("phone").innerHTML = data.phone || "-";
+            document.getElementById("avatar").innerHTML = (data.name || "U").charAt(0).toUpperCase();
 
-const firebaseConfig = {
-apiKey: "AIzaSyDxhduIWiv5xkuySgWlntuYnCweS3aRM5M",
-authDomain: "npsbapp.firebaseapp.com",
-projectId: "npsbapp",
-storageBucket: "npsbapp.firebasestorage.app",
-messagingSenderId: "218858501285",
-appId: "1:218858501285:web:66781bee7880feb7d3094c",
-measurementId: "G-5V4T7X09E3"
-};
+            // One-time logic
+            if (data.stickerGroup && data.stickerGroup.trim() !== "") {
+                stickerInput.value = data.stickerGroup;
+                stickerInput.disabled = true;
+                saveBtn.disabled = true;
+                saveBtn.innerText = "Group Already Set";
+                saveBtn.style.background = "#94a3b8";
+            } else {
+                stickerInput.value = "";
+            }
+        }
 
-const app =
-initializeApp(firebaseConfig);
+        const pointsDoc = await getDoc(doc(db, "gemba_points", user.uid));
+        if (pointsDoc.exists()) { document.getElementById("totalPoints").innerHTML = pointsDoc.data().totalPoints || 0; }
 
-const auth =
-getAuth(app);
+        const scansSnap = await getDocs(query(collection(db, "gemba_scans"), where("userId", "==", user.uid)));
+        document.getElementById("totalScans").innerHTML = scansSnap.size;
 
-const db =
-getFirestore(app);
+        saveBtn.addEventListener("click", async () => {
+            const groupValue = stickerInput.value.trim();
+            if (!groupValue) { alert("Please enter a group name."); return; }
 
-onAuthStateChanged(
-auth,
-async(user)=>{
-
-if(!user){
-
-window.location.href =
-"login.html";
-
-return;
-
-}
-
-const userDoc =
-await getDoc(
-doc(
-db,
-"users",
-user.uid
-)
-);
-
-if(userDoc.exists()){
-
-const data =
-userDoc.data();
-
-document.getElementById(
-"fullName"
-).innerHTML =
-(data.name || "") +
-" " +
-(data.lastName || "");
-
-document.getElementById(
-"department"
-).innerHTML =
-data.department || "-";
-
-document.getElementById(
-"department2"
-).innerHTML =
-data.department || "-";
-
-document.getElementById(
-"employeeId"
-).innerHTML =
-data.employeeId || "-";
-
-document.getElementById(
-"email"
-).innerHTML =
-data.email || "-";
-
-document.getElementById(
-"phone"
-).innerHTML =
-data.phone || "-";
-
-document.getElementById(
-"avatar"
-).innerHTML =
-(data.name || "U")
-.charAt(0)
-.toUpperCase();
-
-}
-
-const pointsDoc =
-await getDoc(
-doc(
-db,
-"gemba_points",
-user.uid
-)
-);
-
-if(pointsDoc.exists()){
-
-const points =
-pointsDoc.data();
-
-document.getElementById(
-"totalPoints"
-).innerHTML =
-points.totalPoints || 0;
-
-}
-
-const scansQuery =
-query(
-collection(
-db,
-"gemba_scans"
-),
-where(
-"userId",
-"==",
-user.uid
-)
-);
-
-const scansSnap =
-await getDocs(
-scansQuery
-);
-
-document.getElementById(
-"totalScans"
-).innerHTML =
-scansSnap.size;
-
-}
-);
-
+            try {
+                await updateDoc(userDocRef, { stickerGroup: groupValue });
+                alert("Sticker Group set successfully! This cannot be changed again.");
+                stickerInput.disabled = true;
+                saveBtn.disabled = true;
+                saveBtn.innerText = "Group Already Set";
+                saveBtn.style.background = "#94a3b8";
+            } catch (error) {
+                alert("Failed to save. Check your connection.");
+            }
+        });
+    });
 </script>
-
 </body>
 </html>
